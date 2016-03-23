@@ -26,7 +26,7 @@ shuffle(anagram)
 
 #Anagrams for testing, the objective is 9 lettered anagrams, however I keep a few anagrams with a small amount of letters to see how my methods fair.
 
-#anagram = ['s','t','r','e','a','m','i','n','g']
+anagram = ['s','t','r','e','a','m','i','n','g']
 #anagram = ['t', 'e', 's', 't']
 #anagram = ['t', 'i', 'r', 'e', 'd']
 
@@ -47,8 +47,24 @@ def perm1(lst):
             xs = lst[:i] + lst[i+1:]
             for p in perm1(xs):
                 anaPerm.append([pos]+p)
-        return anaPerm        
+        return anaPerm   
 
+#perm2 is a little faster than the previous permutation method (making use of the yield keyword), but still falls apart when checking an anagram of size 9.
+
+def perm2(lst):
+    if len(lst) == 0:
+        yield []
+    elif len(lst) == 1:
+        yield lst
+    else:
+        anaPerm = []
+        for i in range(len(lst)):
+            pos = lst[i]
+            xs = lst[:i] + lst[i+1:]
+            for p in perm1(xs):
+                anaPerm = yield [pos]+p
+        return anaPerm  
+    
 #Simple compare method that comapares two lists to see if the dictionary (sorted_words) contains the anagram. The compare method is fine with anagrams of small size, but with an anagram of 9 letters...i'd put the kettle on.
 
 def comp(list1, list2):
@@ -62,11 +78,17 @@ def comp(list1, list2):
                 continue
     return compAna
 
+#Decided to check different types of comparing lists, as the comparisson method I had created was really bogging the program down. http://bookmarks.honewatson.com/2008/05/28/python-list-compare-difference-python-sets/
+
+#Runs at about 10s on a 9 letter anagram, using the intersection of two lists
+def comp2(list1, list2):
+    return list(set(list1) & set(list2))
+
 #Method to tie it altogether and solve the anagrams.
 def solveAna(anagram):
     perms = []
-    perms += [''.join(p) for p in perm1(anagram)]
-    solved = comp(words, perms)
+    perms += [''.join(p) for p in perm2(anagram)]
+    solved = comp3(words, perms)
     return solved
         
 ana = solveAna(anagram)
