@@ -1,8 +1,6 @@
 #Readin from the file
-with open('words.txt', 'r') as fileopen:
-    words = [line.strip() for line in fileopen]
-    
-    
+with open('sowpods.txt', 'r') as fileopen:
+    scrabble = [line.strip() for line in fileopen]
     
 #Experimented with different types of sorting for the dictionary.
 
@@ -23,15 +21,15 @@ with open('words.txt', 'r') as fileopen:
 
 #Using the sorted function additional functionality can be added to the sorting function, such as the reverse option.
 
-sort_words = sorted(words, key=len, reverse=True)
+sort_scrabble_words = sorted(scrabble, key=len, reverse = True)
 #print(sort_words)
 
-#Using a for each i iterate through each word checking to see if the word exceeds a word lenght of 10. I then write the word to a file.
+#Using a for each i iterate through each word checking to see if the word exceeds a word length of 10, or is under a length of 3. I then write the word to a file.
 
 fopen = open("sorted_words.txt", "w")
 
-for word in sort_words:
-    if len(word) < 10:
+for word in sort_scrabble_words:
+    if len(word) < 10 and len(word) > 3:
         #print(word)
         fopen.write("%s\n" % word)
         
