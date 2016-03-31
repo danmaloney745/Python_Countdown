@@ -1,41 +1,37 @@
 #Import the time and random packages for timing how the program runs, and for randomising the anagram.
 import random
-import time
-
-start_time = time.time()
 
 #Readin from the file, populate a list with the contents of the file.
 with open('scrabble_words.txt', 'r') as fileopen:
     words = [line.strip() for line in fileopen]
 
 #Define an array to hold the anagram, additional arrays hold the consonants and vowels
-anagram = []
+
 vowels = ['a','e','i','o','u']
 consonant = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','x','z','w','y']
 
-#Three loops to satisfy the condition of having a set number of consontants and vowels, the third loop pulls from either a consonant or a vowel
-for i in range (0,3):
-    anagram.append(random.choice(vowels))
-for i in range (0,4):
-    anagram.append(random.choice(consonant))
-for i in range (0,2):
-    anagram.append(random.choice(vowels + consonant))
+#Three loops to satisfy the condition of having a set number of consontants and vowels, the third loop pulls from either a consonant or a vowel.
+
+def get_anagram():
+    anagram = []
+    for i in range (0,3):
+        anagram.append(random.choice(vowels))
+    for i in range (0,4):
+        anagram.append(random.choice(consonant))
+    for i in range (0,2):
+        anagram.append(random.choice(vowels + consonant))
+    return anagram
     
-
-#Anagrams for testing, the objective is 9 lettered anagrams, however I keep a few anagrams with a small amount of letters to see how my methods fair.
-
-#anagram = ['s','t','r','e','a','m','i','n','g']
-#anagram = ['t', 'e', 's', 't']
-#anagram = ['t', 'i', 'r', 'e', 'd']
+#Sort the anagram, for improved searching and comparisson
+#Also prints the anagram
 
 from random import shuffle
-shuffle(anagram)
+def sort_anagram(anagram):
+    shuffle(anagram)
+    print (''.join(anagram))
+    sorted_ana = [(''.join(sorted(anagram)))]
+    return sorted_ana
 
-#Sort the anagram, for improved searching and comparisson
-sortedana = [(''.join(sorted(anagram)))]
-
-#Prints the anagram
-print (''.join(anagram))
 
 #First atempt of permuatating every sequence of the anagram. Runs horribly slow and can use some optimisation.
 
@@ -69,7 +65,7 @@ print (''.join(anagram))
 #                anaPerm = yield [pos]+p
 #        return anaPerm
     
-#Simple compare method that comapares two lists to see if the dictionary (sorted_words) contains the anagram. The compare method is fine with anagrams of small size, but with an anagram of 9 letters...i'd put the kettle on.
+#Simple compare method that comapares two lists to see if the dictionary (sorted_words) contains the anagram. The compare method is fine with anagrams of small size, but with an anagram of 9 letters it took some time to complete.
 
 #def comp(list1, list2):
 #    compAna = []
@@ -86,6 +82,7 @@ print (''.join(anagram))
 #Decided to check different types of comparing lists, as the comparisson method I had created was really bogging the program down. http://bookmarks.honewatson.com/2008/05/28/python-list-compare-difference-python-sets/
 
 #Using the intersection of two lists and the itertools permuatations method really speeds up the program.
+
 def compare_lists(list1, list2):
     return list(set(list1) & set(list2))
 
@@ -113,7 +110,21 @@ def solveAnagram(anagram):
     finalword = sorted(foundwords, key=len)
     print(finalword [-1])
 
-ana = permutate_and_compare(anagram)
-solveAnagram(ana)
+def countdown():
+    anagram = get_anagram()
+    sorted_anagram = (''.join(sort_anagram(anagram)))
+    perm_ana = permutate_and_compare(sorted_anagram)
+    solveAnagram(perm_ana)
 
-print("--- %s seconds ---" % (time.time() - start_time))    
+countdown()
+
+#Using the time import I can check the efficiency of the and get the average time of the project over a set amount of loops through the project.
+#https://docs.python.org/2/library/timeit.html
+
+if __name__ == '__main__':
+    import timeit
+    numLoops = 50
+    time = timeit.timeit("countdown()", setup="from __main__ import countdown", number=numLoops)
+    print(time)
+    print(numLoops, "Loops, Average of",  time/numLoops, "Seconds per loop" )
+
